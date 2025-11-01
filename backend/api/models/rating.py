@@ -6,12 +6,13 @@ from sqlalchemy import Column, String, Float, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from .database import Base
+import uuid
 
 
 class Rating(Base):
     __tablename__ = "ratings"
     
-    rating_id = Column(String, primary_key=True)
+    rating_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String, ForeignKey("users.user_id"), nullable=False, index=True)
     movie_id = Column(String, ForeignKey("movies.movie_id"), nullable=False, index=True)
     rating = Column(Float, nullable=False)  # 0.5 to 5.0

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict
 import os
 import jwt
+import uuid
 
 from ..database import get_db
 from ..models import User, Watchlist, Rating
@@ -19,16 +20,18 @@ ALGORITHM = "HS256"
 
 
 def get_current_user_id(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer())
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
 ) -> str:
     """Extract user ID from JWT token"""
     from ..auth import get_current_user
     try:
-        return get_current_user(credentials)
-    except:
-        # Fallback for development
-        user_id = os.getenv("DEFAULT_USER_ID", "1")
-        return user_id
+        if credentials:
+            return get_current_user(credentials)
+    except Exception:
+        pass
+    # Fallback for development
+    user_id = os.getenv("DEFAULT_USER_ID", "1")
+    return user_id
 
 
 class UserPreferences(BaseModel):
@@ -114,6 +117,7 @@ async def add_to_watchlist(
         existing.status = status
     else:
         new_item = Watchlist(
+            watchlist_id=str(uuid.uuid4()),
             user_id=user_id,
             movie_id=movie_id,
             status=status
@@ -141,4 +145,3 @@ async def remove_from_watchlist(
         db.commit()
     
     return {"message": "Removed from watchlist"}
-

@@ -2,24 +2,23 @@
 Recommendation routes
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Query
-from pydantic import BaseModel
-from typing import List, Dict, Optional
 import sys
 from pathlib import Path
+from typing import List, Dict, Optional
+from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel
+import pandas as pd
 
-# Add parent directory to path
+# Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from recommendation_system.hybrid_model import HybridRecommender
 from recommendation_system.data_loader import load_from_csv, load_cleaned_datasets
-import pandas as pd
 
 from ..database import get_db
 from ..models import Movie, Rating
 from ..cache import get_cached_recommendations, cache_recommendations
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Optional
 
 router = APIRouter()
 

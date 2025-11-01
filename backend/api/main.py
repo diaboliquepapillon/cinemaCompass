@@ -9,8 +9,7 @@ import os
 from typing import Optional
 
 from .routes import recommendations, movies, users, auth
-from .database import get_db
-from .models import init_db
+from .models.database import init_db
 
 app = FastAPI(
     title="CinemaCompass API",

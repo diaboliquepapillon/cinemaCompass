@@ -9,6 +9,8 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta
 import jwt
+import os
+import uuid
 
 from ..database import get_db
 from ..models import User
@@ -70,6 +72,7 @@ async def register(user_data: UserRegister, db=Depends(get_db)):
     # Create new user
     hashed_password = hash_password(user_data.password)
     new_user = User(
+        user_id=str(uuid.uuid4()),
         email=user_data.email,
         password_hash=hashed_password,
         name=user_data.name or user_data.email.split("@")[0]
@@ -104,4 +107,3 @@ async def login(login_data: UserLogin, db=Depends(get_db)):
         token_type="bearer",
         user_id=str(user.user_id)
     )
-

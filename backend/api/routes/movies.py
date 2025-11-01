@@ -2,17 +2,17 @@
 Movie routes
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Query
-from pydantic import BaseModel
-from typing import List, Optional
 import sys
 from pathlib import Path
+from typing import List, Optional
+from fastapi import APIRouter, HTTPException, Depends, Query
+from pydantic import BaseModel
+import pandas as pd
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from recommendation_system.data_loader import load_from_csv, load_cleaned_datasets
-import pandas as pd
 
 from ..database import get_db
 from ..models import Movie, Rating
