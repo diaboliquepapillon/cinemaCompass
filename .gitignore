@@ -19,12 +19,19 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Virtual environments
 venv/
 env/
 ENV/
 .venv
+.env
+.ENV
+env.bak/
+venv.bak/
 
 # IDE
 .vscode/
@@ -32,27 +39,137 @@ ENV/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Streamlit
 .streamlit/
+.streamlit/secrets.toml
 
 # Data files
 data/raw/
 data/processed/*.csv
 data/processed/*.zip
+data/processed/*.parquet
+data/processed/*.pkl
+data/processed/*.pickle
 !data/README.md
+!data/scripts/
 
 # Keep data structure but ignore large files
 *.csv
 *.json
+!package.json
+!package-lock.json
+!tsconfig*.json
+!components.json
 !example*.csv
 !sample*.csv
 
 # Environment variables
 .env
 .env.local
+.env.*.local
+*.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.yarn/
+.yarn-integrity
+.next/
+out/
+build/
+dist/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+cinemacompass.db
+
+# Python cache and compiled files
+*.pyc
+*.pyo
+*.pyd
+*.coverage
+.coverage.*
+htmlcov/
+.tox/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Models and large files
+*.h5
+*.pkl
+*.pickle
+*.joblib
+*.model
+models/
+checkpoints/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~
+
+# IDE specific
+.vscode/
+.idea/
+*.code-workspace
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# ML/AI
+wandb/
+mlruns/
+.mlflow/
+
+# Generated files
+*.egg-info/
+dist/
+build/
 
