@@ -14,7 +14,7 @@ const MovieGrid = ({ movies, onMovieWatched, onMovieClick }: MovieGridProps) => 
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movieDetails, setMovieDetails] = useState<any>(null);
 
-  const { data: fetchedDetails } = useQuery({
+  const { data: fetchedDetails, isLoading: isLoadingDetails } = useQuery({
     queryKey: ["movieDetails", selectedMovie?.id],
     queryFn: () => selectedMovie ? getMovieDetails(selectedMovie.id) : null,
     enabled: !!selectedMovie,
@@ -27,11 +27,13 @@ const MovieGrid = ({ movies, onMovieWatched, onMovieClick }: MovieGridProps) => 
   }, [fetchedDetails]);
 
   const handleMovieClick = async (movie: Movie) => {
+    // Always open movie details dialog
+    setSelectedMovie(movie);
+    setMovieDetails(null); // Reset details when selecting new movie
+    
+    // Also notify parent for comparison feature if provided
     if (onMovieClick) {
       onMovieClick(movie);
-    } else {
-      setSelectedMovie(movie);
-      setMovieDetails(null); // Reset details when selecting new movie
     }
   };
 
@@ -55,6 +57,7 @@ const MovieGrid = ({ movies, onMovieWatched, onMovieClick }: MovieGridProps) => 
       <MovieDetails
         movie={selectedMovie}
         movieDetails={movieDetails}
+        isLoading={isLoadingDetails}
         onClose={handleClose}
       />
     </>

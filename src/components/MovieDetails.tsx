@@ -6,12 +6,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Play, ExternalLink, Clock, Users, Film } from "lucide-react";
+import { Play, ExternalLink, Clock, Users, Film, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface MovieDetailsProps {
   movie: Movie | null;
   movieDetails: any | null; // Full TMDb details
+  isLoading?: boolean;
   onClose: () => void;
 }
 
@@ -24,7 +25,7 @@ const streamingServices = {
   apple: { name: "Apple TV+", url: "https://tv.apple.com/search?q=" },
 };
 
-const MovieDetails = ({ movie, movieDetails, onClose }: MovieDetailsProps) => {
+const MovieDetails = ({ movie, movieDetails, isLoading = false, onClose }: MovieDetailsProps) => {
   if (!movie) return null;
 
   const handleStreamingService = (service: keyof typeof streamingServices) => {
@@ -46,8 +47,15 @@ const MovieDetails = ({ movie, movieDetails, onClose }: MovieDetailsProps) => {
         </DialogHeader>
         
         <div className="mt-4 space-y-6">
+          {/* Loading State */}
+          {isLoading && !movieDetails && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 text-netflix-red animate-spin" />
+            </div>
+          )}
+
           {/* Trailer Section */}
-          {trailerUrl && (
+          {isLoading ? null : trailerUrl ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -59,6 +67,17 @@ const MovieDetails = ({ movie, movieDetails, onClose }: MovieDetailsProps) => {
                 allowFullScreen
                 title={`${movie.title} Trailer`}
               />
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative aspect-video rounded-lg overflow-hidden bg-black/40 flex items-center justify-center"
+            >
+              <div className="text-center text-white/60">
+                <Play className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No trailer available</p>
+              </div>
             </motion.div>
           )}
 
