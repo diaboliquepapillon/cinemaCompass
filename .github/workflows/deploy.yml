@@ -28,12 +28,23 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm list --depth=0 || true
       
       - name: Build
-        run: npm run build
+        run: |
+          echo "Building with base path: /cinemaCompass/"
+          npm run build
         env:
           VITE_API_URL: ''
+          NODE_ENV: production
+      
+      - name: Verify build output
+        run: |
+          ls -la dist/
+          test -f dist/index.html || exit 1
+          echo "Build artifacts verified"
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
