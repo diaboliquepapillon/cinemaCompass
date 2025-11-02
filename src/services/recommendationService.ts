@@ -2,7 +2,13 @@
  * Recommendation service for hybrid content + collaborative filtering
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use environment variable or fallback to localhost for development
+// For production/GitHub Pages, the backend would need to be hosted separately
+// Setting to null disables the API calls gracefully
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.MODE === 'production' 
+    ? null  // Disable API calls in production if no backend URL is configured
+    : 'http://localhost:8000');
 
 export interface Recommendation {
   movie_id: string;
@@ -30,6 +36,12 @@ export const getHybridRecommendations = async (
   topN: number = 10
 ): Promise<Recommendation[]> => {
   try {
+    // Only try to fetch if API URL is available and not the placeholder
+    if (!API_BASE_URL || API_BASE_URL.includes('your-backend-api.com')) {
+      console.warn('Backend API not configured, skipping hybrid recommendations');
+      return [];
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/recommendations`, {
       method: 'POST',
       headers: {
@@ -49,8 +61,8 @@ export const getHybridRecommendations = async (
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching recommendations:', error);
-    // Fallback: return empty array
+    // Silently fail - app will use TMDb API fallback
+    console.warn('Hybrid recommendations unavailable, using fallback:', error);
     return [];
   }
 };

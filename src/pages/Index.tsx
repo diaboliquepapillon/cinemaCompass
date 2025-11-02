@@ -46,15 +46,13 @@ const Index = () => {
     queryFn: async () => {
       if (watchedMovies.length === 0) return [];
       
+      // Try hybrid recommendations (gracefully fails if backend unavailable)
       try {
-        // Use hybrid recommendation system
         const likedMovieIds = watchedMovies.map(m => m.id.toString());
         const hybridRecs = await getHybridRecommendations(likedMovieIds, undefined, 20);
         
-        // Convert to Movie format if needed
+        // If hybrid recommendations are available, merge with TMDb results
         if (hybridRecs.length > 0) {
-          // If hybrid recommendations have the right format, use them
-          // Otherwise fall back to TMDb similar movies
           const lastWatchedMovie = watchedMovies[watchedMovies.length - 1];
           let recommendations = await getSimilarMovies(lastWatchedMovie.id);
           
@@ -74,15 +72,14 @@ const Index = () => {
           // Enhance recommendations with hybrid explanations
           recommendations = recommendations.map(movie => ({
             ...movie,
-            // Add explanation if available from hybrid recs
             explanation: hybridRecs.find(r => r.movie_id === movie.id.toString())?.reason
           }));
           
           return recommendations;
         }
       } catch (error) {
-        console.error("Error fetching hybrid recommendations:", error);
-        // Fallback to TMDb similar movies
+        // Silently continue - will use TMDb fallback below
+        console.warn("Hybrid recommendations unavailable, using TMDb:", error);
       }
       
       // Fallback: Use TMDb similar movies
