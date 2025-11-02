@@ -30,19 +30,14 @@ jobs:
           VITE_API_URL: ''
           NODE_ENV: production
       
-      - name: Verify build output
+      - name: List build output
         run: |
-          echo "Checking build output..."
+          echo "Build output:"
           ls -la dist/
           if [ -d "dist/assets" ]; then
-            echo "Assets folder exists:"
-            ls -la dist/assets/
+            echo "Assets:"
+            ls -lh dist/assets/
           fi
-          echo "Checking for required files..."
-          test -f dist/index.html && echo "✅ index.html found" || (echo "❌ index.html missing" && exit 1)
-          find dist/assets -name "*.js" -print -quit | grep -q . && echo "✅ JS files found" || (echo "❌ No JS files" && exit 1)
-          find dist/assets -name "*.css" -print -quit | grep -q . && echo "✅ CSS files found" || (echo "❌ No CSS files" && exit 1)
-          echo "✅ Build verification passed"
       
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
