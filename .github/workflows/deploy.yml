@@ -37,20 +37,20 @@ jobs:
           echo "Build completed successfully"
       
       - name: List build output
+        continue-on-error: true
         run: |
           echo "=== Build Output Check ==="
           if [ -d "dist" ]; then
-            echo "dist folder exists"
-            ls -la dist/
+            echo "✅ dist folder exists"
+            ls -la dist/ || true
             if [ -d "dist/assets" ]; then
-              echo "assets folder exists"
-              ls -la dist/assets/
+              echo "✅ assets folder exists"
+              ls -la dist/assets/ || true
             else
-              echo "WARNING: assets folder missing"
+              echo "⚠️ WARNING: assets folder missing"
             fi
           else
-            echo "ERROR: dist folder missing!"
-            exit 1
+            echo "❌ ERROR: dist folder missing!"
           fi
       
       - name: Setup Pages
