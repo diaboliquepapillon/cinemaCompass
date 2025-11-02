@@ -20,16 +20,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    // Only load lovable-tagger in development mode
-    mode === 'development' && (async () => {
-      try {
-        const { componentTagger } = await import("lovable-tagger");
-        return componentTagger();
-      } catch {
-        return null;
-      }
-    })(),
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
