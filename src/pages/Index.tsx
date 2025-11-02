@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Movie, searchMovies, getSimilarMovies, getMoviesByGenres } from "@/services/movieService";
 import { getHybridRecommendations, Recommendation } from "@/services/recommendationService";
@@ -9,6 +9,7 @@ import { WelcomeDialog } from "@/components/WelcomeDialog";
 import SearchHeader from "@/components/SearchHeader";
 import MovieResults from "@/components/MovieResults";
 import WatchList from "@/components/WatchList";
+import DiscoverySections from "@/components/DiscoverySections";
 
 const moodToGenres = {
   happy: [35, 16, 10751],
@@ -27,6 +28,28 @@ const Index = () => {
   const [comparisonMovies, setComparisonMovies] = useState<Movie[]>([]);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+
+  // Load watchlist from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('cineCompass_watchlist');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setWatchedMovies(parsed);
+      } catch (e) {
+        console.error('Failed to load watchlist from localStorage:', e);
+      }
+    }
+  }, []);
+
+  // Save watchlist to localStorage whenever it changes
+  useEffect(() => {
+    if (watchedMovies.length > 0) {
+      localStorage.setItem('cineCompass_watchlist', JSON.stringify(watchedMovies));
+    } else {
+      localStorage.removeItem('cineCompass_watchlist');
+    }
+  }, [watchedMovies]);
 
   const {
     data: searchResults,

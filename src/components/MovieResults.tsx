@@ -5,6 +5,7 @@ import MovieGrid from "./MovieGrid";
 import MovieComparison from "./MovieComparison";
 import GenreBlender from "./GenreBlender";
 import MoodSelector from "./MoodSelector";
+import DiscoverySections from "./DiscoverySections";
 
 interface MovieResultsProps {
   isSearching: boolean;
@@ -103,6 +104,20 @@ const MovieResults = ({
             onMovieClick={onMovieClick}
           />
         </motion.div>
+      )}
+
+      {/* Show discovery sections when no search, genre blend, or recommendations */}
+      {!searchResults && 
+       !genreBlendedMovies && 
+       !recommendedMovies && 
+       !isSearching && 
+       !isLoadingGenreMovies && (
+        <div className="mt-8">
+          <DiscoverySections
+            onMovieWatched={onMovieWatched}
+            onMovieClick={onMovieClick}
+          />
+        </div>
       )}
     </motion.div>
   );

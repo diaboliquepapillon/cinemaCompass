@@ -61,12 +61,15 @@ const MovieCard = ({ movie, onDragEnd, onClick }: MovieCardProps) => {
     >
       <Card
         className="group relative overflow-hidden rounded-lg transition-all duration-300 hover:ring-2 hover:ring-white/20"
+        role="article"
+        aria-label={`Movie: ${movie.title}`}
       >
         <div className="aspect-[2/3] w-full">
           <motion.img
             src={getImageUrl(movie.poster_path)}
             alt={movie.title}
             className="h-full w-full object-cover"
+            loading="lazy"
             onError={(e) => {
               e.currentTarget.src = getImageUrl('');
             }}

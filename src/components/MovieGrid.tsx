@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Movie } from "@/services/movieService";
+import { useState, useEffect } from "react";
+import { Movie, getMovieDetails } from "@/services/movieService";
 import MovieCard from "./MovieCard";
 import MovieDetails from "./MovieDetails";
+import { useQuery } from "@tanstack/react-query";
 
 interface MovieGridProps {
   movies: Movie[];
@@ -11,13 +12,32 @@ interface MovieGridProps {
 
 const MovieGrid = ({ movies, onMovieWatched, onMovieClick }: MovieGridProps) => {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [movieDetails, setMovieDetails] = useState<any>(null);
 
-  const handleMovieClick = (movie: Movie) => {
+  const { data: fetchedDetails } = useQuery({
+    queryKey: ["movieDetails", selectedMovie?.id],
+    queryFn: () => selectedMovie ? getMovieDetails(selectedMovie.id) : null,
+    enabled: !!selectedMovie,
+  });
+
+  useEffect(() => {
+    if (fetchedDetails) {
+      setMovieDetails(fetchedDetails);
+    }
+  }, [fetchedDetails]);
+
+  const handleMovieClick = async (movie: Movie) => {
     if (onMovieClick) {
       onMovieClick(movie);
     } else {
       setSelectedMovie(movie);
+      setMovieDetails(null); // Reset details when selecting new movie
     }
+  };
+
+  const handleClose = () => {
+    setSelectedMovie(null);
+    setMovieDetails(null);
   };
 
   return (
@@ -34,7 +54,8 @@ const MovieGrid = ({ movies, onMovieWatched, onMovieClick }: MovieGridProps) => 
       </div>
       <MovieDetails
         movie={selectedMovie}
-        onClose={() => setSelectedMovie(null)}
+        movieDetails={movieDetails}
+        onClose={handleClose}
       />
     </>
   );
