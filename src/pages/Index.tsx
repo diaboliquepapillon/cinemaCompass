@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Movie, searchMovies, getSimilarMovies, getMoviesByGenres } from "@/services/movieService";
+import { getHybridRecommendations, Recommendation } from "@/services/recommendationService";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
@@ -45,6 +46,46 @@ const Index = () => {
     queryFn: async () => {
       if (watchedMovies.length === 0) return [];
       
+      try {
+        // Use hybrid recommendation system
+        const likedMovieIds = watchedMovies.map(m => m.id.toString());
+        const hybridRecs = await getHybridRecommendations(likedMovieIds, undefined, 20);
+        
+        // Convert to Movie format if needed
+        if (hybridRecs.length > 0) {
+          // If hybrid recommendations have the right format, use them
+          // Otherwise fall back to TMDb similar movies
+          const lastWatchedMovie = watchedMovies[watchedMovies.length - 1];
+          let recommendations = await getSimilarMovies(lastWatchedMovie.id);
+          
+          // Filter by mood if selected
+          if (selectedMood && recommendations) {
+            const moodGenres = moodToGenres[selectedMood as keyof typeof moodToGenres];
+            recommendations = recommendations.filter(movie => 
+              movie.genre_ids?.some(genreId => moodGenres.includes(genreId))
+            );
+
+            if (recommendations.length < 5) {
+              const moodBasedMovies = await getMoviesByGenres(moodGenres);
+              recommendations = [...recommendations, ...moodBasedMovies].slice(0, 20);
+            }
+          }
+          
+          // Enhance recommendations with hybrid explanations
+          recommendations = recommendations.map(movie => ({
+            ...movie,
+            // Add explanation if available from hybrid recs
+            explanation: hybridRecs.find(r => r.movie_id === movie.id.toString())?.reason
+          }));
+          
+          return recommendations;
+        }
+      } catch (error) {
+        console.error("Error fetching hybrid recommendations:", error);
+        // Fallback to TMDb similar movies
+      }
+      
+      // Fallback: Use TMDb similar movies
       const lastWatchedMovie = watchedMovies[watchedMovies.length - 1];
       let recommendations = await getSimilarMovies(lastWatchedMovie.id);
       

@@ -10,6 +10,7 @@ export interface Movie {
   overview: string;
   genre_ids?: number[];
   vote_count: number;
+  explanation?: string; // Personalized explanation from hybrid recommendations
 }
 
 export const searchMovies = async (query: string) => {

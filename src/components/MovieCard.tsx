@@ -1,5 +1,6 @@
 import { Movie, getImageUrl } from "@/services/movieService";
 import { Card } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
@@ -98,6 +99,27 @@ const MovieCard = ({ movie, onDragEnd, onClick }: MovieCardProps) => {
                 ⭐ {movie.vote_average.toFixed(1)}
               </span>
             </motion.div>
+            {movie.explanation && (
+              <motion.div
+                className="mt-2 text-xs text-white/80 line-clamp-2"
+                initial={{ y: 20, opacity: 0 }}
+                whileHover={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.2, delay: 0.15 }}
+              >
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help underline decoration-dotted">
+                        💡 Why recommended?
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>{movie.explanation}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
