@@ -32,26 +32,40 @@ jobs:
       
       - name: Build
         run: npm run build
+        env:
+          NODE_ENV: production
       
       - name: Verify build output
         run: |
           echo "Build output verification:"
           ls -la dist/
-          ls -la dist/assets/ || (echo "ERROR: No assets folder!" && exit 1)
-          test -f dist/index.html || (echo "ERROR: index.html missing!" && exit 1)
-          JS_COUNT=$(find dist/assets -name "*.js" -type f | wc -l)
-          CSS_COUNT=$(find dist/assets -name "*.css" -type f | wc -l)
-          if [ "$JS_COUNT" -eq 0 ]; then
+          if [ ! -d "dist/assets" ]; then
+            echo "ERROR: No assets folder!"
+            exit 1
+          fi
+          ls -la dist/assets/
+          if [ ! -f "dist/index.html" ]; then
+            echo "ERROR: index.html missing!"
+            exit 1
+          fi
+          JS_COUNT=$(find dist/assets -name "*.js" -type f | wc -l | tr -d ' ')
+          CSS_COUNT=$(find dist/assets -name "*.css" -type f | wc -l | tr -d ' ')
+          if [ "$JS_COUNT" -eq "0" ]; then
             echo "ERROR: JS bundle missing!"
             exit 1
           fi
-          if [ "$CSS_COUNT" -eq 0 ]; then
+          if [ "$CSS_COUNT" -eq "0" ]; then
             echo "ERROR: CSS bundle missing!"
             exit 1
           fi
           echo "Found $JS_COUNT JS file(s) and $CSS_COUNT CSS file(s)"
           echo "Checking index.html content:"
-          grep -q "/cinemaCompass/assets/index-.*\.js" dist/index.html || (echo "ERROR: index.html references wrong files!" && exit 1)
+          if ! grep -q "/cinemaCompass/assets/index-.*\.js" dist/index.html; then
+            echo "ERROR: index.html references wrong files!"
+            echo "index.html content:"
+            cat dist/index.html
+            exit 1
+          fi
           echo "✅ Build verification passed"
       
       - name: Setup Pages
