@@ -6,6 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CineCompass</title>
     <script>
+      // Suppress browser extension connection errors (must run early!)
+      (function() {
+        function isExtensionError(error) {
+          var errorString = String(error || '');
+          return errorString.includes('Receiving end does not exist') ||
+                 errorString.includes('Could not establish connection') ||
+                 errorString.includes('Extension context invalidated');
+        }
+
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          if (isExtensionError(event.reason)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
+        }, true);
+
+        // Handle general errors
+        window.addEventListener('error', function(event) {
+          if (isExtensionError(event.error || event.message)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
+        }, true);
+      })();
+
       // Single Page Apps for GitHub Pages
       // https://github.com/rafgraph/spa-github-pages
       // This script checks to see if a redirect is present in the query string,
