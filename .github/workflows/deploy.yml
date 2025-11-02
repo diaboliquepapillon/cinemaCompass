@@ -35,23 +35,13 @@ jobs:
           echo "Checking build output..."
           ls -la dist/
           if [ -d "dist/assets" ]; then
-            echo "Assets folder exists"
+            echo "Assets folder exists:"
             ls -la dist/assets/
-            JS_COUNT=$(find dist/assets -name "*.js" | wc -l)
-            CSS_COUNT=$(find dist/assets -name "*.css" | wc -l)
-            echo "Found $JS_COUNT JS files and $CSS_COUNT CSS files"
-            if [ "$JS_COUNT" -eq 0 ] || [ "$CSS_COUNT" -eq 0 ]; then
-              echo "❌ Missing required assets"
-              exit 1
-            fi
-          else
-            echo "❌ Assets folder not found"
-            exit 1
           fi
-          if [ ! -f "dist/index.html" ]; then
-            echo "❌ index.html not found"
-            exit 1
-          fi
+          echo "Checking for required files..."
+          test -f dist/index.html && echo "✅ index.html found" || (echo "❌ index.html missing" && exit 1)
+          find dist/assets -name "*.js" -print -quit | grep -q . && echo "✅ JS files found" || (echo "❌ No JS files" && exit 1)
+          find dist/assets -name "*.css" -print -quit | grep -q . && echo "✅ CSS files found" || (echo "❌ No CSS files" && exit 1)
           echo "✅ Build verification passed"
       
       - name: Deploy to gh-pages branch
