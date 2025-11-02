@@ -31,27 +31,9 @@ jobs:
         run: npm ci
       
       - name: Build
-        run: |
-          echo "Starting build..."
-          npm run build || (echo "Build failed!" && exit 1)
-          echo "Build completed successfully"
-      
-      - name: List build output
-        continue-on-error: true
-        run: |
-          echo "=== Build Output Check ==="
-          if [ -d "dist" ]; then
-            echo "✅ dist folder exists"
-            ls -la dist/ || true
-            if [ -d "dist/assets" ]; then
-              echo "✅ assets folder exists"
-              ls -la dist/assets/ || true
-            else
-              echo "⚠️ WARNING: assets folder missing"
-            fi
-          else
-            echo "❌ ERROR: dist folder missing!"
-          fi
+        run: npm run build
+        env:
+          NODE_ENV: production
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
