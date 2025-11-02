@@ -5,9 +5,14 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/cinemaCompass/' : '/',
   server: {
     host: "::",
-    port: 8080,
+    port: 5173,
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
   },
   plugins: [
     react(),
