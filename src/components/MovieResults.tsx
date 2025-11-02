@@ -57,7 +57,7 @@ const MovieResults = ({
         <MoodSelector onMoodSelect={onMoodSelect} selectedMood={selectedMood} />
       </div>
 
-      {(isSearching || isLoadingGenreMovies) && (
+      {isSearching && !searchResults && (
         <motion.div 
           className="flex items-center justify-center py-12"
           animate={{ 
@@ -78,18 +78,46 @@ const MovieResults = ({
         />
       )}
 
-      {genreBlendedMovies && genreBlendedMovies.length > 0 && !searchResults && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8"
-        >
-          <MovieGrid 
-            movies={genreBlendedMovies} 
-            onMovieWatched={onMovieWatched}
-            onMovieClick={onMovieClick}
-          />
-        </motion.div>
+      {!searchResults && selectedGenres.length === 2 && (
+        <>
+          {isLoadingGenreMovies ? (
+            <motion.div 
+              className="flex items-center justify-center py-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <Loader2 className="h-8 w-8 text-netflix-red animate-spin" />
+            </motion.div>
+          ) : genreBlendedMovies && genreBlendedMovies.length > 0 ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8"
+            >
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white">
+                  {genreBlendedMovies.length} {genreBlendedMovies.length === 1 ? 'movie' : 'movies'} found
+                </h3>
+              </div>
+              <MovieGrid 
+                movies={genreBlendedMovies} 
+                onMovieWatched={onMovieWatched}
+                onMovieClick={onMovieClick}
+              />
+            </motion.div>
+          ) : genreBlendedMovies && genreBlendedMovies.length === 0 ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 text-center py-12"
+            >
+              <p className="text-white/60 text-lg mb-2">No movies found</p>
+              <p className="text-white/40 text-sm">
+                Try selecting different genres or clear your selection to browse all movies.
+              </p>
+            </motion.div>
+          ) : null}
+        </>
       )}
 
       {recommendedMovies && recommendedMovies.length > 0 && !searchResults && (

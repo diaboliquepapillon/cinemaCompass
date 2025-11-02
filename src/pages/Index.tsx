@@ -135,10 +135,12 @@ const Index = () => {
   const {
     data: genreBlendedMovies,
     isLoading: isLoadingGenreMovies,
+    error: genreError,
   } = useQuery({
-    queryKey: ["genreMovies", selectedGenres],
+    queryKey: ["genreMovies", selectedGenres.map(g => g.id).sort().join(',')],
     queryFn: () => getMoviesByGenres(selectedGenres.map(g => g.id)),
     enabled: selectedGenres.length === 2,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const handleDeleteMovie = (movieId: number) => {
@@ -218,6 +220,7 @@ const Index = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onSubmit={handleSearch}
+        resultCount={searchResults?.length}
       />
 
       <main className="mx-auto grid max-w-7xl gap-6 p-4 sm:p-6 md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_350px]">

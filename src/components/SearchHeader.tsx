@@ -8,9 +8,10 @@ interface SearchHeaderProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  resultCount?: number;
 }
 
-const SearchHeader = ({ searchTerm, onSearchChange, onSubmit }: SearchHeaderProps) => {
+const SearchHeader = ({ searchTerm, onSearchChange, onSubmit, resultCount }: SearchHeaderProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -52,14 +53,16 @@ const SearchHeader = ({ searchTerm, onSearchChange, onSubmit }: SearchHeaderProp
           </motion.div>
         </form>
 
-        <motion.div 
-          className="text-sm font-medium text-white/80 hidden sm:block"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          {searchTerm.length} results
-        </motion.div>
+        {resultCount !== undefined && (
+          <motion.div 
+            className="text-sm font-medium text-white/80 hidden sm:block"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            {resultCount} results
+          </motion.div>
+        )}
       </div>
     </motion.header>
   );
