@@ -36,8 +36,8 @@ jobs:
           ls -la dist/
           ls -la dist/assets/ || echo "No assets folder"
           test -f dist/index.html || exit 1
-          test -f dist/assets/*.js || exit 1
-          test -f dist/assets/*.css || exit 1
+          ls dist/assets/*.js > /dev/null || exit 1
+          ls dist/assets/*.css > /dev/null || exit 1
           echo "✅ Build verification passed"
       
       - name: Deploy to gh-pages branch
