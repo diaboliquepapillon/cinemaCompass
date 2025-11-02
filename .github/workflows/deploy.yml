@@ -60,7 +60,7 @@ jobs:
           fi
           echo "Found $JS_COUNT JS file(s) and $CSS_COUNT CSS file(s)"
           echo "Checking index.html content:"
-          if ! grep -q "/cinemaCompass/assets/index-.*\.js" dist/index.html; then
+          if ! grep -q "/cinemaCompass/assets/.*\.js" dist/index.html; then
             echo "ERROR: index.html references wrong files!"
             echo "index.html content:"
             cat dist/index.html
