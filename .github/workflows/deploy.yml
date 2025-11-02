@@ -33,6 +33,18 @@ jobs:
       - name: Build
         run: npm run build
       
+      - name: Verify build output
+        run: |
+          echo "Build output verification:"
+          ls -la dist/
+          ls -la dist/assets/ || echo "ERROR: No assets folder!"
+          test -f dist/index.html || (echo "ERROR: index.html missing!" && exit 1)
+          test -f dist/assets/*.js || (echo "ERROR: JS bundle missing!" && exit 1)
+          test -f dist/assets/*.css || (echo "ERROR: CSS bundle missing!" && exit 1)
+          echo "Checking index.html content:"
+          grep -q "/cinemaCompass/assets/index-.*\.js" dist/index.html || (echo "ERROR: index.html references wrong files!" && exit 1)
+          echo "✅ Build verification passed"
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
