@@ -68,7 +68,7 @@ const MovieCard = ({ movie, onDragEnd, onClick }: MovieCardProps) => {
             alt={movie.title}
             className="h-full w-full object-cover"
             onError={(e) => {
-              e.currentTarget.src = "/placeholder.svg";
+              e.currentTarget.src = getImageUrl('');
             }}
             layoutId={`movie-image-${movie.id}`}
           />
