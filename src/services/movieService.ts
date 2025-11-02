@@ -56,7 +56,7 @@ export const getSimilarMovies = async (movieId: number) => {
 };
 
 export const getImageUrl = (path: string) =>
-  path ? `https://image.tmdb.org/t/p/w500${path}` : "/placeholder.svg";
+  path ? `https://image.tmdb.org/t/p/w500${path}` : (import.meta.env.MODE === 'production' ? '/cinemaCompass/placeholder.svg' : '/placeholder.svg');
 
 export const getMoviesByGenres = async (genreIds: number[]) => {
   try {
