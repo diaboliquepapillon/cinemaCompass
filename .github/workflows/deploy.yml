@@ -37,49 +37,60 @@ jobs:
       
       - name: Verify build output
         run: |
-          echo "Build output verification:"
-          ls -la dist/ || echo "WARNING: dist/ folder not found"
-          echo "---"
+          echo "=== Build Verification ==="
+          echo "Checking dist folder..."
+          if [ ! -d "dist" ]; then
+            echo "ERROR: dist folder does not exist!"
+            exit 1
+          fi
+          
+          echo "Listing dist contents:"
+          ls -la dist/ || true
+          
+          echo "Checking for assets folder..."
           if [ ! -d "dist/assets" ]; then
-            echo "ERROR: No assets folder!"
-            ls -la dist/ || true
+            echo "ERROR: dist/assets folder does not exist!"
             exit 1
           fi
-          echo "Assets folder contents:"
-          ls -la dist/assets/ || echo "ERROR: Cannot list assets folder"
-          echo "---"
+          
+          echo "Listing assets:"
+          ls -la dist/assets/ || true
+          
+          echo "Checking for index.html..."
           if [ ! -f "dist/index.html" ]; then
-            echo "ERROR: index.html missing!"
+            echo "ERROR: dist/index.html does not exist!"
             exit 1
           fi
-          echo "index.html exists"
-          echo "---"
-          JS_COUNT=$(find dist/assets -name "*.js" -type f 2>/dev/null | wc -l | tr -d ' ')
-          CSS_COUNT=$(find dist/assets -name "*.css" -type f 2>/dev/null | wc -l | tr -d ' ')
-          echo "JS_COUNT=$JS_COUNT, CSS_COUNT=$CSS_COUNT"
-          if [ "$JS_COUNT" = "0" ] || [ -z "$JS_COUNT" ]; then
-            echo "ERROR: JS bundle missing!"
-            echo "Searching for JS files:"
-            find dist -name "*.js" -type f 2>/dev/null || echo "No JS files found"
+          
+          echo "Finding JS files..."
+          JS_FILES=$(find dist/assets -name "*.js" -type f 2>/dev/null)
+          JS_COUNT=$(echo "$JS_FILES" | grep -c . || echo "0")
+          if [ "$JS_COUNT" -lt 1 ]; then
+            echo "ERROR: No JS files found in dist/assets/"
             exit 1
           fi
-          if [ "$CSS_COUNT" = "0" ] || [ -z "$CSS_COUNT" ]; then
-            echo "ERROR: CSS bundle missing!"
-            echo "Searching for CSS files:"
-            find dist -name "*.css" -type f 2>/dev/null || echo "No CSS files found"
+          echo "Found $JS_COUNT JS file(s)"
+          
+          echo "Finding CSS files..."
+          CSS_FILES=$(find dist/assets -name "*.css" -type f 2>/dev/null)
+          CSS_COUNT=$(echo "$CSS_FILES" | grep -c . || echo "0")
+          if [ "$CSS_COUNT" -lt 1 ]; then
+            echo "ERROR: No CSS files found in dist/assets/"
             exit 1
           fi
-          echo "Found $JS_COUNT JS file(s) and $CSS_COUNT CSS file(s)"
-          echo "---"
-          echo "Checking index.html content for asset references:"
-          cat dist/index.html | grep -E "script|link" || echo "No script/link tags found"
-          if ! grep -q "/cinemaCompass/assets/.*\.js" dist/index.html; then
-            echo "ERROR: index.html does not reference bundled JS files!"
-            echo "Full index.html content:"
+          echo "Found $CSS_COUNT CSS file(s)"
+          
+          echo "Checking index.html for asset references..."
+          if grep -q "/cinemaCompass/assets/.*\.js" dist/index.html; then
+            echo "✅ index.html correctly references bundled JS files"
+          else
+            echo "ERROR: index.html does not reference bundled JS files"
+            echo "index.html content:"
             cat dist/index.html
             exit 1
           fi
-          echo "✅ Build verification passed - all checks successful"
+          
+          echo "✅ All verification checks passed!"
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
