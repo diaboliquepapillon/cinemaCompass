@@ -37,10 +37,19 @@ jobs:
         run: |
           echo "Build output verification:"
           ls -la dist/
-          ls -la dist/assets/ || echo "ERROR: No assets folder!"
+          ls -la dist/assets/ || (echo "ERROR: No assets folder!" && exit 1)
           test -f dist/index.html || (echo "ERROR: index.html missing!" && exit 1)
-          test -f dist/assets/*.js || (echo "ERROR: JS bundle missing!" && exit 1)
-          test -f dist/assets/*.css || (echo "ERROR: CSS bundle missing!" && exit 1)
+          JS_COUNT=$(find dist/assets -name "*.js" -type f | wc -l)
+          CSS_COUNT=$(find dist/assets -name "*.css" -type f | wc -l)
+          if [ "$JS_COUNT" -eq 0 ]; then
+            echo "ERROR: JS bundle missing!"
+            exit 1
+          fi
+          if [ "$CSS_COUNT" -eq 0 ]; then
+            echo "ERROR: CSS bundle missing!"
+            exit 1
+          fi
+          echo "Found $JS_COUNT JS file(s) and $CSS_COUNT CSS file(s)"
           echo "Checking index.html content:"
           grep -q "/cinemaCompass/assets/index-.*\.js" dist/index.html || (echo "ERROR: index.html references wrong files!" && exit 1)
           echo "✅ Build verification passed"
