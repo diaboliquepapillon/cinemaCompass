@@ -30,9 +30,20 @@ jobs:
           VITE_API_URL: ''
           NODE_ENV: production
       
+      - name: Verify build output
+        run: |
+          echo "Checking build output..."
+          ls -la dist/
+          ls -la dist/assets/ || echo "No assets folder"
+          test -f dist/index.html || exit 1
+          test -f dist/assets/*.js || exit 1
+          test -f dist/assets/*.css || exit 1
+          echo "✅ Build verification passed"
+      
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           cname: false
+          keep_files: false
