@@ -31,17 +31,7 @@ jobs:
         run: npm ci
       
       - name: Build
-        run: |
-          echo "Starting build..."
-          set -e
-          npm run build 2>&1 | tee build.log || {
-            echo "Build failed! Error log:"
-            cat build.log
-            exit 1
-          }
-          echo "Build succeeded!"
-          ls -la dist/ || true
-          ls -la dist/assets/ || true
+        run: npm run build
         env:
           NODE_ENV: production
       
@@ -63,3 +53,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
