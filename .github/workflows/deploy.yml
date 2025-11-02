@@ -31,7 +31,17 @@ jobs:
         run: npm ci
       
       - name: Build
-        run: npm run build
+        run: |
+          echo "Starting build..."
+          set -e
+          npm run build 2>&1 | tee build.log || {
+            echo "Build failed! Error log:"
+            cat build.log
+            exit 1
+          }
+          echo "Build succeeded!"
+          ls -la dist/ || true
+          ls -la dist/assets/ || true
         env:
           NODE_ENV: production
       
